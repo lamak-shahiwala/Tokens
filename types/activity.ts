@@ -1,0 +1,8 @@
+export type Activity = {
+  id: string;
+  user: string;
+  status: "completed" | "pending";
+  amountShort: string;   // e.g. "7.1m"
+  price: string;         // e.g. "$0.49"
+  timeAgo: string;       // e.g. "11h"
+};
