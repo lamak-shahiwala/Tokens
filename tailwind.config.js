@@ -3,6 +3,7 @@ module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -19,6 +20,8 @@ module.exports = {
           subtle: "var(--color-text-subtle)",
         },
         border: "var(--color-border)",
+        position: "var(--color-position)"
+        
       },
       fontFamily: {
         title: "var(--font-funnel-display)",

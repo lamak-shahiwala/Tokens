@@ -13,11 +13,7 @@ export default function Home() {
 
       <TopAppsSection />
       <YesterdaysTopAppsSection />
-      {/*
-        <GiCrystalGrowth className="text-8xl" color="green"/>
-        <GiCrystalEye className="text-8xl cursor-pointer text-[#34C759] hover:text-green-700" color=""/>
-      */}
-      
+    
       </main>
       <footer>
         <Footer />

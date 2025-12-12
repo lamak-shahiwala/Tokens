@@ -17,7 +17,8 @@
   --color-text-subtle: #6a6a6a;
 
   /* Borders */
-  --color-border: #1f1f1f;
+  --color-border: #E5E7EB;
+  --color-position: #1f1f1f;
 
   /* Font variables (from next/font) */
   --font-funnel-display: "";
