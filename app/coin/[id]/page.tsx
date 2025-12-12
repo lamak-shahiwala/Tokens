@@ -28,7 +28,7 @@ export default async function CoinPage({ params }: Props) {
       </div>
 
       {/* 2-column layout */}
-      <main className="grid grid-cols-1 md:grid-cols-[1fr_420px] gap-6 w-full p-5 pt-4 h-[78vh]">
+      <main className="grid grid-cols-1 md:grid-cols-[1fr_480px] gap-6 w-full p-5 pt-4 h-[78vh]">
         {/* LEFT: GeckoTerminal */}
         <section className="">
           <GeckoTerminal />

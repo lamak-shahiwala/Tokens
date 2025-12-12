@@ -10,7 +10,7 @@ export default function ConnectWalletButton() {
   if (!ready) return null;
 
   const handleLogoutClick = () => {
-    setShowConfirm(true); // opens confirmation modal
+    setShowConfirm(true);
   };
 
   const confirmLogout = () => {
@@ -24,7 +24,6 @@ export default function ConnectWalletButton() {
 
   return (
     <>
-      {/* BUTTON */}
       <div
         className="px-4 py-2 border h-[8vh] rounded-full
                    flex items-center justify-center text-center
