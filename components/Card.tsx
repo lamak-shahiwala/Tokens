@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import CTAButton from './CTAButton';
-import type { CardData } from '../types/card';
+import React from "react";
+import Link from "next/link";
+import CTAButton from "./CTAButton";
+import type { CardData } from "../types/card";
 
 type Props = {
   data: CardData;
@@ -11,14 +11,18 @@ type Props = {
   className?: string;
 };
 
-export default React.memo(function Card({ data, onClick, className = '' }: Props) {
+export default React.memo(function Card({
+  data,
+  onClick,
+  className = "",
+}: Props) {
   const {
-    id = '0',
+    id = "0",
     position = 0,
-    appName = 'Untitled App',
-    authorHandle = 'unknown',
+    appName = "Untitled App",
+    authorHandle = "unknown",
     authorAvatar,
-    description = '',
+    description = "",
     stats = [],
   } = data ?? {};
 
@@ -30,10 +34,9 @@ export default React.memo(function Card({ data, onClick, className = '' }: Props
       {/* Entire inner card is clickable */}
       <Link href={`/coin/${id}`} className="block group">
         <div className="relative bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden cursor-pointer group-hover:shadow-xl transition">
-          
           {/* Position Badge */}
           <div
-            className="absolute left-0 top-8 bg-border text-bg font-bold text-lg px-4 py-2 rounded-r-lg z-10"
+            className="absolute left-0 top-8 bg-position text-bg font-bold text-lg px-4 py-2 rounded-r-lg z-10"
             aria-hidden
           >
             #{position}
@@ -92,12 +95,7 @@ export default React.memo(function Card({ data, onClick, className = '' }: Props
               </div>
 
               {/* CTA Button — separate click */}
-              <CTAButton
-                onClick={()=>{
-                    
-                }}
-                aria-label={`Trade ${appName}`}
-              >
+              <CTAButton onClick={() => {}} aria-label={`Trade ${appName}`}>
                 Trade
               </CTAButton>
             </div>
@@ -149,12 +147,7 @@ export default React.memo(function Card({ data, onClick, className = '' }: Props
               ))}
             </div>
 
-            <CTAButton
-              onClick={() =>{
-
-              }}
-              aria-label={`Trade ${appName}`}
-            >
+            <CTAButton onClick={() => {}} aria-label={`Trade ${appName}`}>
               Trade
             </CTAButton>
           </div>
