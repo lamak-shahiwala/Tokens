@@ -9,11 +9,13 @@ export default function Home() {
     <div className="min-h-screen w-full ">
       <Navbar />
       <main className="w-full flex-row justify-center items-center">
-      <Header />
+        <Header />
 
-      <TopAppsSection />
-      <YesterdaysTopAppsSection />
-    
+        <TopAppsSection />
+        <YesterdaysTopAppsSection />
+
+        {/* {<UniSwap />
+        <UniswapSwapWidget />} */}
       </main>
       <footer>
         <Footer />

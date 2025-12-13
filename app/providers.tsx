@@ -1,70 +1,77 @@
-'use client'
+"use client";
 
-import React, { useEffect } from "react"
-import { PrivyProvider } from '@privy-io/react-auth'
+import React, { useEffect } from "react";
+import { PrivyProvider } from "@privy-io/react-auth";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    const origConsoleError = console.error
+    const origConsoleError = console.error;
 
     console.error = (...args: any[]) => {
-      // Defensive: try to compute a short string for the first arg
-      let msg = ''
+      let msg = "";
       try {
-        const first = args[0]
+        const first = args[0];
         msg =
-          typeof first === 'string'
+          typeof first === "string"
             ? first
-            : (first && typeof first.toString === 'function' ? String(first) : '')
+            : first && typeof first.toString === "function"
+            ? String(first)
+            : "";
       } catch {
         // If we couldn't stringify the arg, fall through and forward (safer)
         try {
-          origConsoleError.apply(console, args)
+          origConsoleError.apply(console, args);
         } catch {
           // swallow
         }
-        return
+        return;
       }
 
       // Suppress React list-key warning (as before)
-      if (msg.includes('Each child in a list should have a unique "key" prop.')) {
-        return
+      if (
+        msg.includes('Each child in a list should have a unique "key" prop.')
+      ) {
+        return;
       }
 
       // SUPPRESS: Turbopack / source-map noisy messages
       if (
-        msg.includes('Invalid source map') ||
-        msg.includes('sourceMapURL could not be parsed') ||
-        msg.includes('sourceMappingURL could not be parsed')
+        msg.includes("Invalid source map") ||
+        msg.includes("sourceMapURL could not be parsed") ||
+        msg.includes("sourceMappingURL could not be parsed")
       ) {
         // Intentionally do NOT call origConsoleError to avoid re-triggering the parsing.
         // If you want a tiny dev marker, use console.debug (less likely to trigger stack parsing).
         try {
           // console.debug is optional — remove this line if you want complete silence.
-          console.debug?.('[dev] suppressed invalid source map message')
+          console.debug?.("[dev] suppressed invalid source map message");
         } catch {
           // swallow
         }
-        return
+        return;
       }
 
       // For everything else, forward to the original console.error safely
       try {
-        origConsoleError.apply(console, args)
+        origConsoleError.apply(console, args);
       } catch (applyErr) {
         // If the original console.error itself throws, fallback to console.log
         try {
-          console.log('[dev] console.error forwarding failed:', applyErr, ...args)
+          console.log(
+            "[dev] console.error forwarding failed:",
+            applyErr,
+            ...args
+          );
         } catch {
           // last resort: swallow
         }
       }
-    }
+    };
 
     return () => {
-      console.error = origConsoleError
-    }
-  }, [])
+      console.error = origConsoleError;
+    };
+  }, []);
 
   return (
     <React.Fragment key="privy-root">
@@ -78,5 +85,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
       </PrivyProvider>
     </React.Fragment>
-  )
+  );
 }
