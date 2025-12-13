@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
+body.modal-open {
+  overflow: hidden;
+}
+
 :root {
   /* Brand Colors */
   --color-primary: #34C759;
