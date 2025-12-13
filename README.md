@@ -31,12 +31,10 @@
 ### Technology and Tools
 
 - Next.js (App Router) - webpack
+- TypeScript
 - Tailwind CSS
 
 ### Tooling
 
 - ESLint
 - Prettier
-
-**Rationale:**  
-The selected technologies prioritize developer productivity, maintainability, and ecosystem maturity.
