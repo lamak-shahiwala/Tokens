@@ -1,15 +1,17 @@
-// next.config.js
+// next.config.ts
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverExternalPackages: [
+    serverComponentsExternalPackages: [
       'pino', 
       'thread-stream', 
       '@reown/appkit', 
-      '@reown/appkit-utils' 
+      '@reown/appkit-utils',
+      '@reown/appkit-controllers'
     ],
   },
-  transpilePackages: ['@privy-io/react-auth'], 
+  transpilePackages: ['@privy-io/react-auth'],
 };
 
 export default nextConfig;
