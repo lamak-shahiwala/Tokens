@@ -80,7 +80,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         config={{
           appearance: {
             theme: "light",
-            walletList: ["metamask", "coinbase_wallet"], // Correct way to list wallets
           },
           loginMethods: ["wallet"],
         }}
