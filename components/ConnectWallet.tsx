@@ -24,11 +24,7 @@ export default function ConnectWalletButton() {
 
   return (
     <>
-      <div
-        className="px-4 py-2 border h-[6.75vh] md:h-[8vh] rounded-full
-                   flex items-center justify-center text-center
-                   hover:border-gray-400 hover:cursor-pointer"
-      >
+      <div className="px-4 md:px-5 py-2 md:py-2.5 min-h-[40px] md:min-h-[44px] border rounded-full flex items-center justify-center text-sm md:text-base hover:border-gray-400 hover:cursor-pointer">
         {/* Desktop */}
         <div className="hidden md:block">
           {!user ? (
