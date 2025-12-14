@@ -12,11 +12,9 @@ export const mockApps: CardData[] = [
     description:
       'Crystal Market is a prediction protocol that lets users speculate on future on-chain and off-chain events. Traders buy and sell Crystal AppCoins representing outcomes, driving accurate, real-time forecasting markets.',
     stats: [
-      { id: 'txns', label: 'TXNS', value: '213' },
-      { id: 'vol', label: 'VOL', value: '$12.4k' },
-      { id: 'mktcap', label: 'MKT CAP', value: '$8.2M' },
-      { id: 'members', label: 'MEMBERS', value: '1,142' },
-      { id: 'eth', label: 'TOTAL ETH RAISED', value: '18 ETH' },
+      { id: 'mktcap', label: 'MCAP', value: '558.0k' },
+      { id: '24h', label: '24h', value: '18.1k' },
+      { id: '24h△', label: '24h△', value: '+15.26%' },
     ],
     totalEthRaised: '18 ETH',
   },
@@ -29,11 +27,9 @@ export const mockApps: CardData[] = [
     description:
       'EchoSwap enables instant conversions between AppCoins with optimized routing and near-zero slippage. Built for speed and simplicity, it powers seamless liquidity across the AppCoin ecosystem.',
     stats: [
-      { id: 'txns', label: 'TXNS', value: '187' },
-      { id: 'vol', label: 'VOL', value: '$9.7k' },
-      { id: 'mktcap', label: 'MKT CAP', value: '$5.4M' },
-      { id: 'members', label: 'MEMBERS', value: '932' },
-      { id: 'eth', label: 'TOTAL ETH RAISED', value: '11 ETH' },
+      { id: 'mktcap', label: 'MCAP', value: '312.8k' },
+      { id: '24h', label: '24h', value: '11.2k' },
+      { id: '24h△', label: '24h△', value: '-1.88%' },
     ],
     totalEthRaised: '11 ETH',
   },
@@ -46,11 +42,9 @@ export const mockApps: CardData[] = [
     description:
       'LensMall is a creator-focused marketplace enabling seamless trading of social tokens and AppCoins across the Lens ecosystem. It empowers creators with new monetization rails and community ownership.',
     stats: [
-      { id: 'txns', label: 'TXNS', value: '96' },
-      { id: 'vol', label: 'VOL', value: '$4.1k' },
-      { id: 'mktcap', label: 'MKT CAP', value: '$3.8M' },
-      { id: 'members', label: 'MEMBERS', value: '678' },
-      { id: 'eth', label: 'TOTAL ETH RAISED', value: '6 ETH' },
+      { id: 'mktcap', label: 'MCAP', value: '158.5k' },
+      { id: '24h', label: '24h', value: '7.8k' },
+      { id: '24h△', label: '24h△', value: '+2.56%' },
     ],
     totalEthRaised: '6 ETH',
   }

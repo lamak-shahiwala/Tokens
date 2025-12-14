@@ -102,7 +102,9 @@ export default React.memo(function Card({ data, className = "" }: Props) {
               ))}
             </div>
 
-            <CTAButton aria-label={`Trade ${appName}`}>Trade</CTAButton>
+            <CTAButton className="w-52" aria-label={`Trade ${appName}`}>
+              Trade
+            </CTAButton>
           </div>
         </div>
 

@@ -25,11 +25,9 @@ export const defaultCardData: CardData = {
   description:
     'Degen, an ERC-20 token launched in January 2024, has reshaped the Farcaster ecosystem by enabling Casters to reward others with DEGEN for posting quality content.',
   stats: [
-    { id: 'txns', label: 'TXNS', value: '103' },
-    { id: 'vol', label: 'VOL', value: '$1k' },
-    { id: 'mktcap', label: 'MKT CAP', value: '$125M' },
-    { id: 'members', label: 'MEMBERS', value: '136' },
-    { id: 'eth', label: 'TOTAL ETH RAISED', value: '7 ETH' }
+    { id: 'mktcap', label: 'MCAP', value: '558.0k' },
+    { id: '24h', label: '24h', value: '18.1k' },
+    { id: '24h△', label: '24h△', value: '+15.26%' },
   ],
   totalEthRaised: '7 ETH'
 };
