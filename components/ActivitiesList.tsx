@@ -15,7 +15,7 @@ function ActivityRow({ item }: { item: Activity }) {
   return (
     <div>
       <div
-        className="grid py-3 items-center overflow-x-auto overflow-auto scrollbar-hide"
+        className="grid py-3 items-center"
         style={{
           gridTemplateColumns: "minmax(90px, 0.8fr) auto 80px 90px 50px",
         }}
@@ -50,7 +50,13 @@ function ActivityRow({ item }: { item: Activity }) {
 
 export default function ActivitiesList({ items }: { items: Activity[] }) {
   return (
-    <div className="mt-2 space-y-1">
+    <div
+      className="
+        mt-2 space-y-1
+        max-h-[60vh] overflow-y-auto
+        sm:max-h-none sm:overflow-visible
+      "
+    >
       {items.map((activity) => (
         <ActivityRow key={activity.id} item={activity} />
       ))}
