@@ -1,9 +1,16 @@
 // change option labels
 
+import { useRouter } from "next/navigation";
 import { useDropdown } from "@/hooks/useDropdown";
 
 export default function CreateButton() {
+  const router = useRouter();
   const { ref, open, toggle, setOpen } = useDropdown<HTMLDivElement>();
+
+  const goToCreate = () => {
+    setOpen(false);
+    router.push("/create");
+  };
 
   return (
     <div ref={ref} className="relative">
@@ -31,14 +38,14 @@ export default function CreateButton() {
       {open && (
         <div className="absolute right-0 mt-3 w-64 rounded-xl border bg-white shadow-lg p-2 z-50">
           <button
-            onClick={() => setOpen(false)}
+            onClick={goToCreate}
             className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition"
           >
             Create new miniapp
           </button>
 
           <button
-            onClick={() => setOpen(false)}
+            onClick={goToCreate}
             className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition"
           >
             Already have a miniapp
