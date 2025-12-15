@@ -44,10 +44,40 @@ export default React.memo(function Card({ data, className = "" }: Props) {
       >
         {/* Position Badge */}
         <div
-          className="absolute left-0 top-8 bg-position text-bg font-bold text-lg px-4 py-2 rounded-r-lg z-10"
+          className="absolute left-0 top-8 z-10 flex items-center"
           aria-hidden
         >
-          #{position}
+          {(position === 1 || position === 2 || position === 3) && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-r-full bg-white/80 border border-border backdrop-blur shadow">
+              {position === 1 && (
+                <img
+                  src="/images/gold.png"
+                  alt="Gold position"
+                  className="w-6 lg:w-7 h-6 lg:h-7 object-contain"
+                />
+              )}
+              {position === 2 && (
+                <img
+                  src="/images/silver.png"
+                  alt="Silver position"
+                  className="w-6 lg:w-7 h-6 lg:h-7 object-contain"
+                />
+              )}
+              {position === 3 && (
+                <img
+                  src="/images/bronze.png"
+                  alt="Bronze position"
+                  className="w-6 lg:w-7 h-6 lg:h-7 object-contain"
+                />
+              )}
+            </div>
+          )}
+
+          {position > 3 && (
+            <div className="flex items-center gap-2 px-4 py-2 rounded-r-full bg-white/80 border border-border backdrop-blur shadow font-bold text-lg text-gray-900">
+              #{position}
+            </div>
+          )}
         </div>
 
         {/* Desktop Layout */}
