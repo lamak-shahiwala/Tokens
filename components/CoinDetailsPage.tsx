@@ -12,6 +12,8 @@ import HoldersList from "./HoldersList";
 import { mockHolders } from "@/data/holders";
 import DetailsList from "./DetailsList";
 import { mockDetails } from "@/data/details";
+import TokenomicsList from "./TokenomicsList";
+import { mockTokenomics } from "@/data/tokenomics";
 
 export default function CoinDetailsPage({ data }: { data: CardData }) {
   const [activeTab, setActiveTab] = useState<
@@ -119,8 +121,8 @@ export default function CoinDetailsPage({ data }: { data: CardData }) {
             )}
 
             {activeTab === "tokenomics" && (
-              <div className="p-3 rounded-md bg-bg-secondary">
-                Tokenomics list will appear here.
+              <div className="">
+                <TokenomicsList tokenomics={mockTokenomics} />
               </div>
             )}
 
