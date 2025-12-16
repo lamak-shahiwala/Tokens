@@ -5,6 +5,7 @@ import GeckoTerminal from "@/components/GeckoTerminal";
 import Navbar from "@/components/NavBar";
 import { mockApps } from "@/data/card";
 import { notFound } from "next/navigation";
+import { FiArrowUpRight } from "react-icons/fi";
 
 type ParamsPromise = Promise<{ id: string }>;
 type Props = { params: ParamsPromise };
@@ -19,12 +20,15 @@ export default async function CoinPage({ params }: Props) {
     <div className="min-h-screen w-full">
       <Navbar />
 
-      <div className="px-5 pt-3">
+      <div className="flex justify-between px-5 pt-3">
         <Link href="/">
           <button className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh] inline-flex items-center justify-center pr-1 hover:border-gray-400">
             <IoArrowBack className="mr-1" /> Back
           </button>
         </Link>
+        <button className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh] inline-flex items-center justify-center pr-1 hover:border-gray-400">
+          Admin <FiArrowUpRight />
+        </button>
       </div>
 
       {/* 2-column layout */}
@@ -36,7 +40,7 @@ export default async function CoinPage({ params }: Props) {
 
         {/* RIGHT: Coin Details */}
         <aside className="h-[80vh] lg:h-full overflow-hidden flex flex-col">
-          <div className="h-full overflow-y-auto pr-1">
+          <div className="h-full overflow-y-auto pr-1 scrollbar-hide">
             <CoinDetailsPage data={data} />
           </div>
         </aside>
