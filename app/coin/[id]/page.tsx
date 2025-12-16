@@ -22,11 +22,18 @@ export default async function CoinPage({ params }: Props) {
 
       <div className="flex justify-between px-5 pt-3">
         <Link href="/">
-          <button className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh] inline-flex items-center justify-center pr-1 hover:border-gray-400">
-            <IoArrowBack className="mr-1" /> Back
+          <button
+            className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh]
+      inline-flex items-center justify-center gap-1 pr-1 leading-none hover:border-gray-400"
+          >
+            <IoArrowBack /> Back
           </button>
         </Link>
-        <button className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh] inline-flex items-center justify-center pr-1 hover:border-gray-400">
+
+        <button
+          className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh]
+    inline-flex items-center justify-center gap-1 leading-none mr-2 hover:border-gray-400"
+        >
           Admin <FiArrowUpRight />
         </button>
       </div>
