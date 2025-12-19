@@ -26,15 +26,33 @@ export default function Navbar() {
             </div>
 
             {open && (
-              <div className="absolute mt-3 left-2 w-48 rounded-xl border bg-bg shadow-lg p-2">
+              <div
+                className="
+                  absolute mt-3 left-2 z-50 flex flex-col
+                  w-48 md:w-56 
+                  p-3 md:p-4 
+                  /* Matching Card.tsx rounded values */
+                  rounded-[2rem] lg:rounded-[2.5rem] 
+                  border border-border bg-bg shadow-xl
+                "
+              >
                 <a
                   href="https://minidev.fun"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex justify-between items-center px-4 py-2 rounded-lg text-gray-800 hover:bg-gray-100 transition"
+                  className="
+                    flex justify-between items-center 
+                    px-4 py-3 
+                    rounded-[1.2rem] lg:rounded-[1.5rem] 
+                    text-gray-800 hover:bg-gray-100 transition-colors
+                  "
                 >
-                  <img src={"/images/minidev.png"} className="h-6 lg:h-8" />{" "}
-                  <LuExternalLink />
+                  <img
+                    src={"/images/minidev.png"}
+                    className="h-6 lg:h-8"
+                    alt="minidev"
+                  />
+                  <LuExternalLink className="text-gray-400" />
                 </a>
               </div>
             )}
