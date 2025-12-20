@@ -6,7 +6,7 @@ import { useModal } from "@/app/providers/ModalProvider";
 type CTAButtonProps = {
   children: React.ReactNode;
   className?: string;
-  tokenAddress: string;
+  tokenAddress?: string;
   tokenSymbol?: string;
 };
 
