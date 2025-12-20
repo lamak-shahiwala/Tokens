@@ -69,7 +69,7 @@ export default function CreateButton() {
 
           {/* Option 2 */}
           <button
-            onClick={goToCreate}
+            onClick={() => setOpen(false)}
             className="
               w-full flex items-center justify-between 
               p-3 md:p-4 
