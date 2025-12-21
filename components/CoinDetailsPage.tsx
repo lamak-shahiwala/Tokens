@@ -20,7 +20,6 @@ export default function CoinDetailsPage({
     "activity" | "holders" | "details" | "tokenomics"
   >("activity");
 
-  // Destructure for easier access while keeping your UI logic intact
   const { cardData, tokenomics, details, holders, activities } = data;
 
   return (
@@ -28,32 +27,32 @@ export default function CoinDetailsPage({
       <div className="rounded-[2.5rem] border overflow-hidden">
         <div className="h-full flex flex-col bg-bg text-text rounded-2xl p-6 scrollbar-hide">
           {/* Header */}
-          <div className="mb-5">
-            <h1 className="text-3xl font-title leading-tight">
+          <div className="mb-5 min-w-0">
+            <h1 className="text-3xl font-title leading-tight break-words">
               {cardData.appName}
             </h1>
 
-            <div className="flex items-center gap-2 mt-1 ml-1">
-              <span className="text-sm text-text-muted">
+            <div className="flex items-center gap-2 mt-1 ml-1 min-w-0">
+              <span className="text-sm text-text-muted truncate max-w-[160px]">
                 by {cardData.authorHandle}
               </span>
 
-              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-bg-tertiary hover:bg-bg-secondary">
+              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-bg-tertiary hover:bg-bg-secondary flex-shrink-0">
                 <IoGlobeOutline />
               </button>
 
-              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-bg-tertiary hover:bg-bg-secondary">
+              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-bg-tertiary hover:bg-bg-secondary flex-shrink-0">
                 <FaDiscord />
               </button>
 
-              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-bg-tertiary hover:bg-bg-secondary">
+              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-bg-tertiary hover:bg-bg-secondary flex-shrink-0">
                 <FaXTwitter />
               </button>
             </div>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-text-subtle mt-1 mb-6">
+          <p className="text-sm text-text-subtle mt-1 mb-6 break-words line-clamp-3">
             {cardData.description}
           </p>
 
@@ -62,19 +61,24 @@ export default function CoinDetailsPage({
             {cardData.stats
               .filter((stat) => stat.id !== "eth")
               .map((stat) => (
-                <div key={stat.id} className="rounded-md p-3 bg-white/3">
-                  <div className="text-xs text-text-muted mb-1">
+                <div
+                  key={stat.id}
+                  className="rounded-md p-3 bg-white/3 min-w-0 overflow-hidden"
+                >
+                  <div className="text-xs text-text-muted mb-1 truncate">
                     {stat.label}
                   </div>
+
                   <div
                     className={clsx(
-                      "text-base font-semibold",
+                      "text-base font-semibold truncate",
                       stat.id === "24h△"
                         ? parseFloat(stat.value) >= 0
                           ? "text-primary"
                           : "text-negative"
                         : "text-text"
                     )}
+                    title={stat.value}
                   >
                     {stat.value}
                   </div>
@@ -82,7 +86,7 @@ export default function CoinDetailsPage({
               ))}
           </div>
 
-          {/* Tabs (scrollable on mobile) */}
+          {/* Tabs */}
           <div className="mb-3">
             <nav className="flex gap-2 overflow-x-auto whitespace-nowrap border-b border-bg-tertiary pb-3 scrollbar-hide">
               {[
@@ -105,7 +109,7 @@ export default function CoinDetailsPage({
                     onClick={() => setActiveTab(k)}
                     aria-pressed={active}
                     className={clsx(
-                      "flex-shrink-0 py-1 px-5 text-sm font-medium transition rounded-full",
+                      "flex-shrink-0 py-1 px-5 text-sm font-medium transition rounded-full truncate max-w-[140px]",
                       active
                         ? "text-bg bg-primary border border-primary"
                         : "text-text-muted hover:text-text"
@@ -119,19 +123,19 @@ export default function CoinDetailsPage({
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1 overflow-auto pr-2 text-sm text-text-muted">
+          <div className="flex-1 overflow-auto pr-2 text-sm text-text-muted break-words">
             {activeTab === "activity" && <ActivitiesList items={activities} />}
 
             {activeTab === "holders" && <HoldersList holders={holders} />}
 
             {activeTab === "details" && (
-              <div className="">
+              <div className="min-w-0">
                 <DetailsList details={details} />
               </div>
             )}
 
             {activeTab === "tokenomics" && (
-              <div className="">
+              <div className="min-w-0">
                 <TokenomicsList tokenomics={tokenomics} />
               </div>
             )}
@@ -143,7 +147,7 @@ export default function CoinDetailsPage({
 
       {/* Sticky CTA */}
       <div className="sticky bottom-0 pt-6 backdrop-blur-lg bg-bg">
-        <CTAButton className="w-full font-body">Trade</CTAButton>
+        <CTAButton className="w-full font-body truncate">Trade</CTAButton>
       </div>
     </div>
   );
