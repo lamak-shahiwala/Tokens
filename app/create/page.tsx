@@ -1,44 +1,112 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Loader2,
-  ChevronDown,
-  ChevronUp,
-  HelpCircle,
-  CheckCircle2,
-  Copy,
-  ArrowRight,
-} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { useWallets } from "@privy-io/react-auth";
 import { useClankerDeploy } from "@/hooks/useClankerDeployment";
 import Navbar from "@/components/NavBar";
-import CTAButton from "@/components/CTAButton";
+import { GoInfo } from "react-icons/go";
 
 /* ----------------------------- Types ----------------------------- */
 
 type SectionKey = "metadata" | "buy";
 
+type FormErrors = {
+  name?: string;
+  symbol?: string;
+  imageUrl?: string;
+};
+
+/* -------------------------- Tooltip --------------------------- */
+
+const InfoTooltip = ({ text }: { text: string }) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<"top" | "bottom">("top");
+
+  const handleMouseEnter = () => {
+    if (!wrapperRef.current || !tooltipRef.current) return;
+
+    const wrapperRect = wrapperRef.current.getBoundingClientRect();
+    const tooltipHeight = tooltipRef.current.offsetHeight;
+
+    if (wrapperRect.top < tooltipHeight + 12) {
+      setPosition("bottom");
+    } else {
+      setPosition("top");
+    }
+  };
+
+  return (
+    <div
+      ref={wrapperRef}
+      onMouseEnter={handleMouseEnter}
+      className="relative inline-flex group"
+    >
+      <GoInfo size={14} className="text-text-muted cursor-pointer" />
+
+      <div
+        ref={tooltipRef}
+        className={`
+          pointer-events-none absolute left-1/2 z-50 w-64 -translate-x-1/2
+          rounded-lg border border-gray-200 bg-white px-3 py-2
+          text-xs text-gray-700 shadow-lg
+          opacity-0 transition-opacity duration-150
+          group-hover:opacity-100
+          ${position === "top" ? "bottom-full mb-2" : "top-full mt-2"}
+        `}
+      >
+        {text}
+
+        <div
+          className={`
+            absolute left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-white
+            border-gray-200
+            ${
+              position === "top"
+                ? "top-full -mt-1 border-l border-b"
+                : "bottom-full -mb-1 border-r border-t"
+            }
+          `}
+        />
+      </div>
+    </div>
+  );
+};
+
 /* -------------------------- Components --------------------------- */
+
+const FieldLabel = ({
+  label,
+  required,
+}: {
+  label: string;
+  required?: boolean;
+}) => (
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    {label}
+    {required && <span className="text-red-500 ml-1">*</span>}
+  </label>
+);
 
 const SectionHeader = ({
   title,
+  tooltip,
   isOpen,
   onToggle,
 }: {
   title: string;
+  tooltip?: string;
   isOpen: boolean;
   onToggle: () => void;
 }) => (
   <div
     onClick={onToggle}
-    className="flex items-center justify-between py-4 border-b border-border cursor-pointer group"
+    className="flex items-center justify-between py-4 border-b border-border cursor-pointer"
   >
     <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-        {title}
-      </span>
-      <HelpCircle size={14} className="text-gray-400" />
+      <span className="text-sm font-medium text-text-muted">{title}</span>
+      {tooltip && <InfoTooltip text={tooltip} />}
     </div>
     {isOpen ? (
       <ChevronUp size={18} className="text-gray-400" />
@@ -52,20 +120,12 @@ const SectionHeader = ({
 
 export default function CreatePage() {
   const { wallets } = useWallets();
-  const {
-    deployToken,
-    isDeploying,
-    step,
-    error: deployError,
-    deployedAddress,
-    txHash,
-    reset,
-  } = useClankerDeploy();
+  const { deployToken, isDeploying, error: deployError } = useClankerDeploy();
 
   const isConnected = wallets.length > 0;
+
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [localError, setLocalError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>(
     {
@@ -84,37 +144,53 @@ export default function CreatePage() {
     vaultPercentage: "",
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  /* --------------------------- Validation --------------------------- */
+
+  const validate = (values = form) => {
+    const nextErrors: FormErrors = {};
+    if (!values.name.trim()) nextErrors.name = "Token name is required";
+    if (!values.symbol.trim()) nextErrors.symbol = "Symbol is required";
+    if (!values.imageUrl.trim()) nextErrors.imageUrl = "Image URL is required";
+    setErrors(nextErrors);
+    return nextErrors;
+  };
+
+  useEffect(() => {
+    validate();
+  }, [form]);
+
+  const isFormValid =
+    !errors.name && !errors.symbol && !errors.imageUrl && isConnected;
+
+  const inputClass = (field: keyof FormErrors) =>
+    `w-full rounded-xl p-4 text-sm outline-none transition
+     ${
+       errors[field] && touched[field]
+         ? "border border-red-400 bg-red-50"
+         : "border border-gray-200 focus:border-emerald-500"
+     }`;
+
   /* --------------------------- Helpers --------------------------- */
 
   const toggleSection = (section: SectionKey) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
   const updateForm = (key: string, value: any) => {
-    setLocalError(null);
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const handleDeploy = async () => {
-    if (!isConnected) return;
-
-    if (!form.name || !form.symbol) {
-      setLocalError("Token name and symbol are required.");
-      return;
-    }
+    const errs = validate();
+    setTouched({ name: true, symbol: true, imageUrl: true });
+    if (Object.keys(errs).length > 0 || !isConnected) return;
 
     await deployToken({
       name: form.name,
@@ -135,62 +211,6 @@ export default function CreatePage() {
 
   if (!mounted) return null;
 
-  /* ------------------------ Success View ------------------------ */
-
-  if (step === "success") {
-    return (
-      <div className="min-h-screen bg-white text-gray-900">
-        <Navbar />
-        <main className="max-w-xl mx-auto px-6 py-20 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full mb-6">
-            <CheckCircle2 size={32} />
-          </div>
-
-          <h1 className="text-2xl font-bold mb-2">
-            Deployed on {form.network}
-          </h1>
-          <p className="text-gray-500 text-sm mb-8">Confirmed on-chain.</p>
-
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-left mb-8">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-2">
-              Transaction Hash
-            </label>
-            <div className="flex items-center justify-between gap-3">
-              <code className="text-xs text-emerald-600 break-all font-mono">
-                {txHash}
-              </code>
-              <button
-                onClick={() => handleCopy(txHash || "")}
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                {copied ? (
-                  <CheckCircle2 size={16} className="text-emerald-500" />
-                ) : (
-                  <Copy size={16} />
-                )}
-              </button>
-            </div>
-          </div>
-
-          <a
-            href={`https://clanker.world/clanker/${deployedAddress}`}
-            target="_blank"
-            className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2"
-          >
-            View Token <ArrowRight size={18} />
-          </a>
-
-          <button
-            onClick={reset}
-            className="mt-4 text-sm text-gray-500 hover:text-gray-900"
-          >
-            Deploy another
-          </button>
-        </main>
-      </div>
-    );
-  }
-
   /* ------------------------- Create View ------------------------- */
 
   return (
@@ -206,32 +226,30 @@ export default function CreatePage() {
 
         {/* ---------- Network ---------- */}
         <div className="space-y-3 mb-6">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-            Select Network
-          </label>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-sm font-medium text-text-muted">Network</span>
+            <InfoTooltip text="Select the blockchain network where your token will be deployed." />
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             {["Base", "Monad"].map((net) => (
               <button
                 key={net}
                 onClick={() => updateForm("network", net)}
-                className={`py-4 rounded-xl border font-body font-bold text-sm transition-all
+                className={`py-4 rounded-xl border font-bold text-sm transition-all
                   ${
                     form.network === net
                       ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                       : "border-gray-200 text-gray-500 hover:border-gray-300"
                   }`}
               >
-                {net == "Base" ? (
-                  <div className="flex gap-2 items-center justify-center">
-                    <img src={"/images/base.png"} className="h-5" />
-                    {net}
-                  </div>
-                ) : (
-                  <div className="flex gap-2 items-center justify-center">
-                    <img src={"/images/monad.png"} className="h-5" />
-                    {net}
-                  </div>
-                )}
+                <div className="flex gap-2 items-center justify-center">
+                  <img
+                    src={`/images/${net.toLowerCase()}.png`}
+                    className="h-5"
+                  />
+                  {net}
+                </div>
               </button>
             ))}
           </div>
@@ -239,94 +257,131 @@ export default function CreatePage() {
 
         {/* ---------- Required Fields ---------- */}
         <div className="space-y-4">
-          <input
-            className="w-full border border-gray-200 rounded-xl p-4 text-sm focus:border-emerald-500 outline-none"
-            placeholder="Token Name *"
-            value={form.name}
-            onChange={(e) => updateForm("name", e.target.value)}
-          />
-          <input
-            className="w-full border border-gray-200 rounded-xl p-4 text-sm focus:border-emerald-500 outline-none"
-            placeholder="Symbol *"
-            value={form.symbol}
-            onChange={(e) => updateForm("symbol", e.target.value)}
-          />
+          <div>
+            <FieldLabel label="Token Name" required />
+            <input
+              className={inputClass("name")}
+              value={form.name}
+              placeholder="Enter token name"
+              onChange={(e) => updateForm("name", e.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, name: true }))}
+            />
+          </div>
+
+          <div>
+            <FieldLabel label="Symbol" required />
+            <input
+              className={inputClass("symbol")}
+              value={form.symbol}
+              placeholder="Enter token symbol"
+              onChange={(e) => updateForm("symbol", e.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, symbol: true }))}
+            />
+          </div>
+
+          <div>
+            <FieldLabel label="Image URL" required />
+            <input
+              className={inputClass("imageUrl")}
+              value={form.imageUrl}
+              placeholder="Enter token image url"
+              onChange={(e) => updateForm("imageUrl", e.target.value)}
+              onBlur={() => setTouched((t) => ({ ...t, imageUrl: true }))}
+            />
+          </div>
         </div>
 
-        {/* ---------- Metadata ---------- */}
+        {/* ---------- Metadata & Buy ---------- */}
         <div className="pt-6">
           <SectionHeader
             title="Token Metadata (optional)"
+            tooltip="Add additional information about your token"
             isOpen={openSections.metadata}
             onToggle={() => toggleSection("metadata")}
           />
+
           {openSections.metadata && (
-            <div className="pt-4 space-y-4">
+            <div className="mt-4">
+              <FieldLabel label="Description" />
               <textarea
                 className="w-full border border-gray-200 rounded-xl p-4 text-sm min-h-[100px]"
-                placeholder="Token description..."
+                placeholder="Enter token description"
                 value={form.description}
                 onChange={(e) => updateForm("description", e.target.value)}
-              />
-              <input
-                className="w-full border border-gray-200 rounded-xl p-4 text-sm"
-                placeholder="Image URL"
-                value={form.imageUrl}
-                onChange={(e) => updateForm("imageUrl", e.target.value)}
               />
             </div>
           )}
 
           <SectionHeader
             title="Liquidity & Buy (optional)"
+            tooltip="Configure initial buy amount and optional vault settings."
             isOpen={openSections.buy}
             onToggle={() => toggleSection("buy")}
           />
+
           {openSections.buy && (
             <div className="pt-4 space-y-4">
-              <input
-                type="number"
-                className="w-full border border-gray-200 rounded-xl p-4 text-sm"
-                placeholder="Initial Buy (ETH / MON)"
-                value={form.devBuyEth}
-                onChange={(e) => updateForm("devBuyEth", e.target.value)}
-              />
-              <input
-                type="number"
-                className="w-full border border-gray-200 rounded-xl p-4 text-sm"
-                placeholder="Vault % (0–100)"
-                value={form.vaultPercentage}
-                onChange={(e) => updateForm("vaultPercentage", e.target.value)}
-              />
+              <div>
+                <FieldLabel label="Initial Buy (ETH / MON)" />
+                <input
+                  type="number"
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                  value={form.devBuyEth}
+                  onChange={(e) => updateForm("devBuyEth", e.target.value)}
+                />
+              </div>
+
+              <div>
+                <FieldLabel label="Vault % (0–100)" />
+                <input
+                  type="number"
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                  value={form.vaultPercentage}
+                  onChange={(e) =>
+                    updateForm("vaultPercentage", e.target.value)
+                  }
+                />
+              </div>
             </div>
           )}
+        </div>
+
+        {/* ---------- Terms & Conditions ---------- */}
+        <div className="pt-8">
+          <label className="flex items-start justify-center gap-3 text-sm text-gray-600">
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+            />
+            <span>
+              I confirm that I have read and agree to the{" "}
+              <span className="font-medium text-gray-900">
+                Terms & Conditions
+              </span>
+            </span>
+          </label>
         </div>
 
         {/* ---------- Deploy ---------- */}
         <div className="pt-8">
           <button
             onClick={handleDeploy}
-            disabled={!isConnected || !form.name || !form.symbol || isDeploying}
-            className={`w-full inline-flex items-center justify-center px-8 py-3 rounded-full font-bold shadow-sm text-white
+            disabled={!isFormValid || isDeploying}
+            className={`w-full py-3 rounded-full font-bold transition
               ${
-                isDeploying || !form.name || !form.symbol || !isConnected
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-primary hover:bg-green-600 text-white"
+                !isFormValid || isDeploying
+                  ? "bg-gray-200 text-gray-400"
+                  : "bg-primary text-white hover:bg-green-600"
               }`}
           >
-            {isDeploying ? (
-              <>
-                <Loader2 size={18} className="animate-spin" />
-                Deploying...
-              </>
-            ) : (
-              `Create token on ${form.network}`
-            )}
+            {isDeploying ? "Deploying..." : `Create token on ${form.network}`}
           </button>
 
-          {(localError || deployError) && (
-            <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs text-center font-medium">
-              {localError || deployError}
+          {deployError && (
+            <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs text-center">
+              {deployError}
             </div>
           )}
         </div>
