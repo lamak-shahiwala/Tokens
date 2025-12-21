@@ -31,28 +31,21 @@ export default async function AdminPage({ params }: Props) {
     <div className="min-h-screen w-full font-body bg-bg text-slate-800 pb-10">
       <Navbar />
 
-      <div className="px-5 pt-6 pb-2 flex items-center justify-between gap-5">
+      <div className="flex justify-between px-5 pt-3">
         <Link href={`/coin/${id}`}>
           <button
-            className="font-normal font-body bg-white border border-gray-300 rounded-full 
-        inline-flex items-center gap-2 lg:ml-1 hover:bg-gray-50 transition-colors text-sm
-        max-w-[200px] h-10 px-4"
+            className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh]
+        inline-flex items-center justify-center gap-1 pr-1 leading-none hover:border-gray-400"
           >
-            <IoArrowBack className="shrink-0" />
-            <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-              Back to {appName}
-            </span>
+            <IoArrowBack /> Back
           </button>
         </Link>
 
         <button
-          className="font-normal font-body bg-white border border-gray-300 rounded-full 
-      inline-flex items-center justify-center gap-2 mr-1 hover:bg-gray-50 transition-colors text-sm
-      h-10 px-4"
+          className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh]
+      inline-flex items-center justify-center gap-1 leading-none mr-2 hover:border-gray-400"
         >
-          <span className="block lg:hidden">Refresh</span>
-          <span className="hidden lg:block">Refresh Data</span>
-          <LuRefreshCw />
+          Refresh <LuRefreshCw />
         </button>
       </div>
 
