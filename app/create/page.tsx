@@ -1,120 +1,32 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { useWallets } from "@privy-io/react-auth";
 import { useClankerDeploy } from "@/hooks/useClankerDeployment";
 import Navbar from "@/components/NavBar";
-import { GoInfo } from "react-icons/go";
+import {
+  InfoTooltip,
+  FieldLabel,
+  SectionHeader,
+  OptionCard,
+} from "@/components/create/FieldBits";
+import { TbLoader2 } from "react-icons/tb";
 
 /* ----------------------------- Types ----------------------------- */
 
-type SectionKey = "metadata" | "buy";
+type SectionKey =
+  | "metadata"
+  | "rewardRecipients"
+  | "feeConfig"
+  | "poolConfig"
+  | "creatorBuy"
+  | "creatorVault";
 
 type FormErrors = {
   name?: string;
   symbol?: string;
   imageUrl?: string;
 };
-
-/* -------------------------- Tooltip --------------------------- */
-
-const InfoTooltip = ({ text }: { text: string }) => {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<"top" | "bottom">("top");
-
-  const handleMouseEnter = () => {
-    if (!wrapperRef.current || !tooltipRef.current) return;
-
-    const wrapperRect = wrapperRef.current.getBoundingClientRect();
-    const tooltipHeight = tooltipRef.current.offsetHeight;
-
-    if (wrapperRect.top < tooltipHeight + 12) {
-      setPosition("bottom");
-    } else {
-      setPosition("top");
-    }
-  };
-
-  return (
-    <div
-      ref={wrapperRef}
-      onMouseEnter={handleMouseEnter}
-      className="relative inline-flex group"
-    >
-      <GoInfo size={14} className="text-text-muted cursor-pointer" />
-
-      <div
-        ref={tooltipRef}
-        className={`
-          pointer-events-none absolute left-1/2 z-50 w-64 -translate-x-1/2
-          rounded-lg border border-gray-200 bg-white px-3 py-2
-          text-xs text-gray-700 shadow-lg
-          opacity-0 transition-opacity duration-150
-          group-hover:opacity-100
-          ${position === "top" ? "bottom-full mb-2" : "top-full mt-2"}
-        `}
-      >
-        {text}
-
-        <div
-          className={`
-            absolute left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-white
-            border-gray-200
-            ${
-              position === "top"
-                ? "top-full -mt-1 border-l border-b"
-                : "bottom-full -mb-1 border-r border-t"
-            }
-          `}
-        />
-      </div>
-    </div>
-  );
-};
-
-/* -------------------------- Components --------------------------- */
-
-const FieldLabel = ({
-  label,
-  required,
-}: {
-  label: string;
-  required?: boolean;
-}) => (
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    {label}
-    {required && <span className="text-red-500 ml-1">*</span>}
-  </label>
-);
-
-const SectionHeader = ({
-  title,
-  tooltip,
-  isOpen,
-  onToggle,
-}: {
-  title: string;
-  tooltip?: string;
-  isOpen: boolean;
-  onToggle: () => void;
-}) => (
-  <div
-    onClick={onToggle}
-    className="flex items-center justify-between py-4 border-b border-border cursor-pointer"
-  >
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text-text-muted">{title}</span>
-      {tooltip && <InfoTooltip text={tooltip} />}
-    </div>
-    {isOpen ? (
-      <ChevronUp size={18} className="text-gray-400" />
-    ) : (
-      <ChevronDown size={18} className="text-gray-400" />
-    )}
-  </div>
-);
 
 /* --------------------------- Page --------------------------- */
 
@@ -130,7 +42,11 @@ export default function CreatePage() {
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>(
     {
       metadata: true,
-      buy: false,
+      rewardRecipients: false,
+      feeConfig: false,
+      poolConfig: false,
+      creatorBuy: false,
+      creatorVault: false,
     }
   );
 
@@ -142,6 +58,35 @@ export default function CreatePage() {
     imageUrl: "",
     devBuyEth: "",
     vaultPercentage: "",
+
+    // metadata links
+    telegram: "",
+    website: "",
+    twitter: "",
+    farcaster: "",
+
+    // reward recipients
+    adminAddress: "",
+    rewardRecipientAddress: "",
+    rewardToken: "WETH" as "WETH" | "CLANKER" | "BOTH",
+    rewardPercentage: "100",
+
+    // fee config
+    feeMode: "STATIC" as "STATIC" | "DYNAMIC",
+    feeTier: "1", // "1" | "2" | "3"
+    sniperTaxDuration: "15",
+
+    // pool config
+    poolType: "PROJECT_10" as "PROJECT_10" | "LEGACY" | "PROJECT_20",
+    startingMcap: "10",
+
+    // creator buy
+    creatorBuyEth: "0",
+
+    // creator vault
+    vaultRecipientAddress: "",
+    lockupDays: "30",
+    vestingMode: "INSTANT" as "INSTANT" | "30" | "180",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -233,24 +178,21 @@ export default function CreatePage() {
 
           <div className="grid grid-cols-2 gap-3">
             {["Base", "Monad"].map((net) => (
-              <button
+              <OptionCard
                 key={net}
+                selected={form.network === net}
                 onClick={() => updateForm("network", net)}
-                className={`py-4 rounded-xl border font-bold text-sm transition-all
-                  ${
-                    form.network === net
-                      ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                      : "border-gray-200 text-gray-500 hover:border-gray-300"
-                  }`}
-              >
-                <div className="flex gap-2 items-center justify-center">
-                  <img
-                    src={`/images/${net.toLowerCase()}.png`}
-                    className="h-5"
-                  />
-                  {net}
-                </div>
-              </button>
+                label={
+                  <>
+                    <img
+                      src={`/images/${net.toLowerCase()}.png`}
+                      className="h-5"
+                      alt={net}
+                    />
+                    {net}
+                  </>
+                }
+              />
             ))}
           </div>
         </div>
@@ -291,7 +233,7 @@ export default function CreatePage() {
           </div>
         </div>
 
-        {/* ---------- Metadata & Buy ---------- */}
+        {/* ---------- Token Metadata (optional) ---------- */}
         <div className="pt-6">
           <SectionHeader
             title="Token Metadata (optional)"
@@ -301,46 +243,348 @@ export default function CreatePage() {
           />
 
           {openSections.metadata && (
-            <div className="mt-4">
-              <FieldLabel label="Description" />
-              <textarea
-                className="w-full border border-gray-200 rounded-xl p-4 text-sm min-h-[100px]"
-                placeholder="Enter token description"
-                value={form.description}
-                onChange={(e) => updateForm("description", e.target.value)}
-              />
-            </div>
-          )}
-
-          <SectionHeader
-            title="Liquidity & Buy (optional)"
-            tooltip="Configure initial buy amount and optional vault settings."
-            isOpen={openSections.buy}
-            onToggle={() => toggleSection("buy")}
-          />
-
-          {openSections.buy && (
-            <div className="pt-4 space-y-4">
+            <div className="mt-4 space-y-4">
               <div>
-                <FieldLabel label="Initial Buy (ETH / MON)" />
-                <input
-                  type="number"
-                  className="w-full border border-gray-200 rounded-xl p-4 text-sm"
-                  value={form.devBuyEth}
-                  onChange={(e) => updateForm("devBuyEth", e.target.value)}
+                <FieldLabel label="Description" />
+                <textarea
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm min-h-[100px]"
+                  placeholder="Enter token description"
+                  value={form.description}
+                  onChange={(e) => updateForm("description", e.target.value)}
                 />
               </div>
 
               <div>
-                <FieldLabel label="Vault % (0–100)" />
+                <FieldLabel label="Website Link" />
+                <input
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                  placeholder="https://..."
+                  value={form.website}
+                  onChange={(e) => updateForm("website", e.target.value)}
+                />
+              </div>
+
+              <div>
+                <FieldLabel label="X (Twitter) Link" />
+                <input
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                  placeholder="https://x.com/..."
+                  value={form.twitter}
+                  onChange={(e) => updateForm("twitter", e.target.value)}
+                />
+              </div>
+
+              <div>
+                <FieldLabel label="Farcaster Link" />
+                <input
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                  placeholder="https://farcaster.xyz/..."
+                  value={form.farcaster}
+                  onChange={(e) => updateForm("farcaster", e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ---------- Reward Recipients (optional) ---------- */}
+        <div className="pt-6">
+          <SectionHeader
+            title="Reward Recipients (optional)"
+            tooltip="Configure reward admins and recipients."
+            isOpen={openSections.rewardRecipients}
+            onToggle={() => toggleSection("rewardRecipients")}
+          />
+
+          {openSections.rewardRecipients && (
+            <div className="pt-4 space-y-4">
+              <div>
+                <FieldLabel label="Admin Address" />
+                <input
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm font-mono"
+                  placeholder="0x..."
+                  value={form.adminAddress}
+                  onChange={(e) => updateForm("adminAddress", e.target.value)}
+                />
+              </div>
+
+              <div>
+                <FieldLabel label="Reward Recipient Address" />
+                <input
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm font-mono"
+                  placeholder="0x..."
+                  value={form.rewardRecipientAddress}
+                  onChange={(e) =>
+                    updateForm("rewardRecipientAddress", e.target.value)
+                  }
+                />
+              </div>
+
+              <div>
+                <FieldLabel label="Reward Token" />
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { key: "WETH", label: "WETH" },
+                    { key: "CLANKER", label: "$Your Clanker" },
+                    { key: "BOTH", label: "Both" },
+                  ].map((opt) => (
+                    <OptionCard
+                      key={opt.key}
+                      label={opt.label}
+                      selected={form.rewardToken === opt.key}
+                      onClick={() => updateForm("rewardToken", opt.key)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel label="Reward Percentage" />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                    value={form.rewardPercentage}
+                    onChange={(e) =>
+                      updateForm("rewardPercentage", e.target.value)
+                    }
+                  />
+                  <span className="text-sm text-gray-500 pr-2">%</span>
+                </div>
+              </div>
+
+              <p className="text-xs text-emerald-600 font-medium">
+                Allocated Rewards: {form.rewardPercentage || "0"}/100%
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* ---------- Fee Configuration (optional) ---------- */}
+        <div className="pt-6">
+          <SectionHeader
+            title="Fee Configuration (optional)"
+            tooltip="Configure fee mode, tier and sniper tax."
+            isOpen={openSections.feeConfig}
+            onToggle={() => toggleSection("feeConfig")}
+          />
+
+          {openSections.feeConfig && (
+            <div className="pt-4 space-y-4">
+              <div>
+                <FieldLabel label="Mode" />
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: "STATIC", label: "Static" },
+                    { key: "DYNAMIC", label: "Dynamic 3%" },
+                  ].map((opt) => (
+                    <OptionCard
+                      key={opt.key}
+                      label={opt.label}
+                      selected={form.feeMode === opt.key}
+                      onClick={() => updateForm("feeMode", opt.key)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel label="Fee Tier" />
+                <div className="grid grid-cols-3 gap-3">
+                  {["1", "2", "3"].map((tier) => (
+                    <OptionCard
+                      key={tier}
+                      label={`${tier}%`}
+                      selected={form.feeTier === tier}
+                      onClick={() => updateForm("feeTier", tier)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel label="Sniper Tax Duration" />
                 <input
                   type="number"
                   className="w-full border border-gray-200 rounded-xl p-4 text-sm"
-                  value={form.vaultPercentage}
+                  value={form.sniperTaxDuration}
                   onChange={(e) =>
-                    updateForm("vaultPercentage", e.target.value)
+                    updateForm("sniperTaxDuration", e.target.value)
                   }
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Seconds for sniper tax to decay from starting fee (80%) to
+                  ending fee (5%).
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ---------- Pool Configuration (optional) ---------- */}
+        <div className="pt-6">
+          <SectionHeader
+            title="Pool Configuration (optional)"
+            tooltip="Choose pool template and starting market cap."
+            isOpen={openSections.poolConfig}
+            onToggle={() => toggleSection("poolConfig")}
+          />
+
+          {openSections.poolConfig && (
+            <div className="pt-4 space-y-4">
+              <div>
+                <FieldLabel label="Pool Type" />
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { key: "PROJECT_10", label: "Project 10 ETH" },
+                    { key: "LEGACY", label: "Legacy" },
+                    { key: "PROJECT_20", label: "Project 20 ETH" },
+                  ].map((opt) => (
+                    <OptionCard
+                      key={opt.key}
+                      label={opt.label}
+                      selected={form.poolType === opt.key}
+                      onClick={() => updateForm("poolType", opt.key)}
+                      className="text-xs sm:text-sm"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel label="Starting Market Cap in ETH" />
+                <input
+                  type="number"
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                  value={form.startingMcap}
+                  onChange={(e) => updateForm("startingMcap", e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ---------- Extension: Creator Buy (optional) ---------- */}
+        <div className="pt-6">
+          <SectionHeader
+            title="Extension: Creator Buy (optional)"
+            tooltip="Configure an upfront creator buy."
+            isOpen={openSections.creatorBuy}
+            onToggle={() => toggleSection("creatorBuy")}
+          />
+
+          {openSections.creatorBuy && (
+            <div className="pt-4 space-y-3">
+              <div>
+                <FieldLabel label="ETH Amount for Creator Buy" />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                    value={form.creatorBuyEth}
+                    onChange={(e) =>
+                      updateForm("creatorBuyEth", e.target.value)
+                    }
+                  />
+                  <span className="text-sm text-gray-500 pr-2">ETH</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                {["0.1", "0.5", "1"].map((amt) => (
+                  <OptionCard
+                    key={amt}
+                    label={`${amt} ETH`}
+                    selected={form.creatorBuyEth === amt}
+                    onClick={() => updateForm("creatorBuyEth", amt)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ---------- Extension: Creator Vault (optional) ---------- */}
+        <div className="pt-6">
+          <SectionHeader
+            title="Extension: Creator Vault (optional)"
+            tooltip="Lock a portion of supply into a vesting vault."
+            isOpen={openSections.creatorVault}
+            onToggle={() => toggleSection("creatorVault")}
+          />
+
+          {openSections.creatorVault && (
+            <div className="pt-4 space-y-4">
+              <div>
+                <FieldLabel label="Vault Percentage" />
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="number"
+                    className="w-full border border-gray-200 rounded-xl p-4 text-sm"
+                    value={form.vaultPercentage}
+                    onChange={(e) =>
+                      updateForm("vaultPercentage", e.target.value)
+                    }
+                  />
+                  <span className="text-sm text-gray-500 pr-2">%</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                {["5", "15", "30"].map((p) => (
+                  <OptionCard
+                    key={p}
+                    label={`${p}%`}
+                    selected={form.vaultPercentage === p}
+                    onClick={() => updateForm("vaultPercentage", p)}
+                  />
+                ))}
+              </div>
+
+              <div>
+                <FieldLabel label="Vault Recipient Address" />
+                <input
+                  className="w-full border border-gray-200 rounded-xl p-4 text-sm font-mono"
+                  placeholder="0x..."
+                  value={form.vaultRecipientAddress}
+                  onChange={(e) =>
+                    updateForm("vaultRecipientAddress", e.target.value)
+                  }
+                />
+              </div>
+
+              <div>
+                <FieldLabel label="Lockup Period" />
+                <div className="grid grid-cols-4 gap-3">
+                  {["7", "30", "90", "180"].map((d) => (
+                    <OptionCard
+                      key={d}
+                      label={`${d}d`}
+                      selected={form.lockupDays === d}
+                      onClick={() => updateForm("lockupDays", d)}
+                      className="text-xs sm:text-sm"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <FieldLabel label="Vesting Period" />
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { key: "INSTANT", label: "Instant" },
+                    { key: "30", label: "30 days" },
+                    { key: "180", label: "180 days" },
+                  ].map((opt) => (
+                    <OptionCard
+                      key={opt.key}
+                      label={opt.label}
+                      selected={form.vestingMode === opt.key}
+                      onClick={() => updateForm("vestingMode", opt.key)}
+                      className="text-xs sm:text-sm"
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -376,7 +620,13 @@ export default function CreatePage() {
                   : "bg-primary text-white hover:bg-green-600"
               }`}
           >
-            {isDeploying ? "Deploying..." : `Create token on ${form.network}`}
+            {isDeploying ? (
+              <div className="flex items-center justify-center gap-2">
+                <TbLoader2 className="animate-spin" size={20} /> Deploying...
+              </div>
+            ) : (
+              `Create token on ${form.network}`
+            )}
           </button>
 
           {deployError && (
