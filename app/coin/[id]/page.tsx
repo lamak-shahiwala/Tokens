@@ -34,13 +34,14 @@ export default async function CoinPage({ params }: Props) {
         </Link>
 
         {/* 3. Link "Admin" button to BaseScan */}
-
-        <button
-          className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh]
+        <Link href={`/coin/${id}/admin`}>
+          <button
+            className="font-normal text-text bg-bg border rounded-full w-[7rem] h-[6vh]
               inline-flex items-center justify-center gap-1 leading-none mr-2 hover:border-gray-400"
-        >
-          Admin <FiArrowUpRight />
-        </button>
+          >
+            Admin <FiArrowUpRight />
+          </button>
+        </Link>
       </div>
 
       <main className="grid grid-cols-1 md:grid-cols-[1fr_480px] gap-6 w-full p-5 pt-4 md:h-[78vh]">
