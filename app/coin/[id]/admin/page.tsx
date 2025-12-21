@@ -36,7 +36,7 @@ export default async function AdminPage({ params }: Props) {
           <button
             className="font-normal font-body bg-white border border-gray-300 rounded-full 
         inline-flex items-center gap-2 lg:ml-1 hover:bg-gray-50 transition-colors text-sm
-        max-w-[200px] py-2 px-4"
+        max-w-[200px] h-10 px-4"
           >
             <IoArrowBack className="shrink-0" />
             <span className="whitespace-nowrap overflow-hidden text-ellipsis">
@@ -48,7 +48,7 @@ export default async function AdminPage({ params }: Props) {
         <button
           className="font-normal font-body bg-white border border-gray-300 rounded-full 
       inline-flex items-center justify-center gap-2 mr-1 hover:bg-gray-50 transition-colors text-sm
-      h-12 px-4"
+      h-10 px-4"
         >
           <span className="block lg:hidden">Refresh</span>
           <span className="hidden lg:block">Refresh Data</span>
