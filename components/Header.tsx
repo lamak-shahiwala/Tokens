@@ -1,13 +1,13 @@
 export default function Header() {
   return (
-    <header className="w-full flex justify-center py-6 lg:py-8 bg-bg">
+    <header className="w-full flex justify-center py-6 lg:pb-2 bg-bg">
       <div className="w-full max-w-7xl px-4 lg:px-6">
         <div
           className="
             relative overflow-hidden shadow-xl
             rounded-[2.5rem] lg:rounded-[3rem]
             p-6 lg:p-8
-            h-[25vh] sm:h-[25vh] md:h-[30vh] lg:h-[40vh]
+            h-[25vh] md:h-[30vh] lg:h-[40vh]
           "
         >
           {/* Background image for Desktop */}
@@ -38,7 +38,8 @@ export default function Header() {
                   text-3xl sm:text-4xl md:text-6xl lg:text-7xl
                 "
               >
-                The Appcoin
+                The <br className="md:hidden" />
+                Appcoin
                 <br />
                 <span className="inline-block">Launchpad.</span>
               </h1>
