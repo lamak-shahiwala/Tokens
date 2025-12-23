@@ -31,7 +31,7 @@ export default React.memo(function Card({ data, className = "" }: Props) {
   return (
     <article
       className={clsx(
-        "group w-full overflow-hidden rounded-[2.5rem] bg-bg border border-border transition-all duration-300 hover:shadow-xl cursor-pointer flex flex-col",
+        "group w-full overflow-hidden rounded-[2.5rem] bg-bg border border-border transition-all duration-300 cursor-pointer flex flex-col",
         className
       )}
       onClick={navigate}
