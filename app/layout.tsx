@@ -16,8 +16,9 @@ const funnelSans = Funnel_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "The AppCoin Launchpad",
-  description: "",
+  title: "Tokens - The AppCoin Launchpad",
+  description: "launch tokens for apps created with Minidev",
+  keywords: ["Token", "Clanker", "Minidev", "Launchpad"],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
